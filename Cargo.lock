@@ -4627,10 +4627,7 @@ dependencies = [
  "lance-io",
  "lance-namespace",
  "object_store",
- "reqwest",
- "serde_json",
  "snafu",
- "url",
 ]
 
 [[package]]
@@ -4702,7 +4699,7 @@ dependencies = [
 
 [[package]]
 name = "lancedb"
-version = "0.22.3-beta.5"
+version = "0.22.3"
 dependencies = [
  "ahash",
  "anyhow",
@@ -4797,7 +4794,7 @@ dependencies = [
 
 [[package]]
 name = "lancedb-nodejs"
-version = "0.22.3-beta.5"
+version = "0.22.3"
 dependencies = [
  "arrow-array",
  "arrow-ipc",
@@ -4817,7 +4814,7 @@ dependencies = [
 
 [[package]]
 name = "lancedb-python"
-version = "0.25.3-beta.5"
+version = "0.25.3"
 dependencies = [
  "arrow",
  "async-trait",

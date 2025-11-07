@@ -23,7 +23,7 @@ lance-io = { "version" = "=0.39.0", default-features = false }
 lance-index = "=0.39.0"
 lance-linalg = "=0.39.0"
 lance-namespace = "=0.39.0"
-lance-namespace-impls = { "version" = "=0.39.0", "features" = ["dir-aws", "dir-gcp", "dir-azure", "dir-oss", "rest"] }
+lance-namespace-impls = { "version" = "=0.39.0", default-features = false }
 lance-table = "=0.39.0"
 lance-testing = "=0.39.0"
 lance-datafusion = "=0.39.0"

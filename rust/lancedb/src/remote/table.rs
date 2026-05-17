@@ -520,6 +520,21 @@ impl<S: HttpSend> RemoteTable<S> {
             }
         }
 
+        if let Some(order_by) = &params.order_by {
+            body["order_by"] = serde_json::Value::Array(
+                order_by
+                    .iter()
+                    .map(|o| {
+                        serde_json::json!({
+                            "column_name": o.column_name,
+                            "ascending": o.ascending,
+                            "nulls_first": o.nulls_first,
+                        })
+                    })
+                    .collect(),
+            );
+        }
+
         Ok(())
     }
 
@@ -2086,7 +2101,7 @@ mod tests {
     use crate::{
         DistanceType, Error, Table,
         index::{Index, IndexStatistics, IndexType, vector::IvfPqIndexBuilder},
-        query::{ExecutableQuery, QueryBase},
+        query::{ColumnOrdering, ExecutableQuery, QueryBase},
         remote::ARROW_FILE_CONTENT_TYPE,
     };
 
@@ -3028,6 +3043,18 @@ mod tests {
                 "distance_type": "cosine",
                 "bypass_vector_index": true,
                 "columns": ["a", "b"],
+                "order_by": [
+                    {
+                        "column_name": "score",
+                        "ascending": false,
+                        "nulls_first": true,
+                    },
+                    {
+                        "column_name": "id",
+                        "ascending": true,
+                        "nulls_first": false,
+                    }
+                ],
                 "nprobes": 12,
                 "minimum_nprobes": 12,
                 "maximum_nprobes": 12,
@@ -3059,6 +3086,10 @@ mod tests {
             .limit(42)
             .offset(10)
             .select(Select::columns(&["a", "b"]))
+            .order_by(Some(vec![
+                ColumnOrdering::desc_nulls_first("score".to_string()),
+                ColumnOrdering::asc_nulls_last("id".to_string()),
+            ]))
             .nearest_to(vec![0.1, 0.2, 0.3])
             .unwrap()
             .column("my_vector")

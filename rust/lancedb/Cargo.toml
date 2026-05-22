@@ -1,6 +1,6 @@
 [package]
 name = "lancedb"
-version = "0.29.0"
+version = "0.29.1"
 edition.workspace = true
 description = "LanceDB: A serverless, low-latency vector database for AI applications"
 license.workspace = true
@@ -40,7 +40,10 @@ lance-datafusion.workspace = true
 lance-datagen = { workspace = true }
 lance-file = { workspace = true }
 lance-io = { workspace = true }
-lance-index = { workspace = true, features = ["tokenizer-jieba", "tokenizer-lindera"] }
+lance-index = { workspace = true, features = [
+    "tokenizer-jieba",
+    "tokenizer-lindera",
+] }
 lance-table = { workspace = true }
 lance-linalg = { workspace = true }
 lance-testing = { workspace = true }
@@ -123,7 +126,12 @@ huggingface = [
     "lance-namespace-impls/dir-huggingface",
 ]
 dynamodb = ["lance/dynamodb", "aws"]
-remote = ["dep:reqwest", "dep:http", "lance-namespace-impls/rest", "lance-namespace-impls/rest-adapter"]
+remote = [
+    "dep:reqwest",
+    "dep:http",
+    "lance-namespace-impls/rest",
+    "lance-namespace-impls/rest-adapter",
+]
 fp16kernels = ["lance-linalg/fp16kernels"]
 s3-test = []
 bedrock = ["dep:aws-sdk-bedrockruntime"]

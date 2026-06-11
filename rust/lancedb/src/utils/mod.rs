@@ -244,6 +244,9 @@ pub fn supported_btree_data_type(dtype: &DataType) -> bool {
 }
 
 pub fn supported_bitmap_data_type(dtype: &DataType) -> bool {
+    if let DataType::Dictionary(key, value) = dtype {
+        return key.is_integer() && supported_bitmap_data_type(value);
+    }
     dtype.is_integer()
         || matches!(
             dtype,
@@ -672,6 +675,42 @@ mod tests {
             validate_namespace(&["ns_1".to_string(), "ns-2".to_string(), "ns.3".to_string()])
                 .is_ok()
         );
+    }
+
+    #[test]
+    fn test_supported_bitmap_data_type() {
+        // Plain types from the existing allow-list still work.
+        assert!(supported_bitmap_data_type(&DataType::Utf8));
+        assert!(supported_bitmap_data_type(&DataType::LargeUtf8));
+        assert!(supported_bitmap_data_type(&DataType::Binary));
+        assert!(supported_bitmap_data_type(&DataType::Boolean));
+        assert!(supported_bitmap_data_type(&DataType::Int16));
+        assert!(supported_bitmap_data_type(&DataType::UInt64));
+        assert!(!supported_bitmap_data_type(&DataType::Float64));
+
+        // Dictionary value type must itself be a supported bitmap type.
+        assert!(supported_bitmap_data_type(&DataType::Dictionary(
+            Box::new(DataType::Int16),
+            Box::new(DataType::Utf8),
+        )));
+        assert!(supported_bitmap_data_type(&DataType::Dictionary(
+            Box::new(DataType::UInt32),
+            Box::new(DataType::Boolean),
+        )));
+        assert!(supported_bitmap_data_type(&DataType::Dictionary(
+            Box::new(DataType::Int8),
+            Box::new(DataType::Int64),
+        )));
+        assert!(!supported_bitmap_data_type(&DataType::Dictionary(
+            Box::new(DataType::Int16),
+            Box::new(DataType::Float64),
+        )));
+
+        // Non-integer keys are rejected even when the value type is supported.
+        assert!(!supported_bitmap_data_type(&DataType::Dictionary(
+            Box::new(DataType::Utf8),
+            Box::new(DataType::Utf8),
+        )));
     }
 
     #[test]
